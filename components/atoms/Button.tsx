@@ -2,7 +2,7 @@ import React from 'react'
 import type { ButtonHTMLAttributes } from 'react'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'secondary'
+    variant?: 'primary' | 'secondary' | 'accent'
 }
 
 export function Button({
@@ -11,10 +11,11 @@ export function Button({
                            ...rest
                        }: ButtonProps) {
     const base = 'px-4 py-2 rounded transition'
-    const style =
-        variant === 'primary'
-            ? 'bg-blue-600 text-white hover:bg-blue-700'
-            : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+    const style = {
+        primary:   'bg-primary text-background hover:opacity-90',
+        secondary: 'bg-secondary text-text hover:opacity-90',
+        accent:    'bg-accent text-background hover:opacity-90',
+    }[variant]
 
     return <button className={`${base} ${style} ${className}`} {...rest} />
 }

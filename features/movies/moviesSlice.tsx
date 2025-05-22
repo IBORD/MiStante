@@ -1,13 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-// Tipo para cada filme
 export interface Movie {
     id: string
     title: string
     posterUrl: string
 }
 
-// Estado inicial
 interface MoviesState {
     list: Movie[]
     loading: boolean
