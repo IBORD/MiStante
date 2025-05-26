@@ -1,19 +1,27 @@
-import React from 'react'
+import React from 'react';
 
-interface LogoProps {
-    src: string
-    alt: string
-    size?: number
+export interface LogoProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+    src: string;
+    alt: string;
+    size: number;
+    rounded?: boolean;
 }
 
-export function Logo({ src, alt, size = 40 }: LogoProps) {
+export const Logo: React.FC<LogoProps> = ({
+                                              src,
+                                              alt,
+                                              size,
+                                              rounded = true,
+                                              ...imgProps
+                                          }) => {
     return (
         <img
             src={src}
             alt={alt}
             width={size}
             height={size}
-            className="rounded-full"
+            className={`${rounded ? 'rounded-full' : ''}`}
+            {...imgProps}
         />
-    )
-}
+    );
+};

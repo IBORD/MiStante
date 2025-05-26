@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DummyJSON API Test Suite
 
-## Getting Started
+## Project Overview
 
-First, run the development server:
+This project uses Rest Assured with Allure reporting to automate API tests against the [DummyJSON API](https://dummyjson.com/docs).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+We cover the following endpoints:
+
+* **GET /test** – health check endpoint
+* **GET /users** – retrieve paginated list of users
+* **POST /auth/login** – authenticate a user and receive tokens
+* **GET /auth/products** – retrieve authenticated products list
+* **POST /products/add** – create a new product
+* **GET /products** – retrieve paginated list of products
+* **GET /products/{id}** – retrieve a single product by ID
+
+## Repository Structure
+
+```
+qa-api-tests/
+├── src/
+│   ├── main/
+│   │   └── java/com/dummyjson/rest/client     # Rest Assured client classes
+│   └── test/
+│       └── java/com/dummyjson/rest/tests      # Test classes by feature
+├── schemas/                                   # JSON Schema files for validation
+├── allure-results/                            # Allure raw results (gitignored)
+├── allure-report/                             # Generated Allure report
+├── pom.xml                                    # Maven configuration
+└── README.md                                  # Project documentation
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Prerequisites
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* Java 11 or higher
+* Maven 3.6+
+* Internet access to `https://dummyjson.com`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup
 
-## Learn More
+1. Clone the repository and switch to `main` branch:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   git clone git@gitlab.com:yourgroup/qa-api-tests.git
+   cd qa-api-tests
+   git checkout main
+   ```
+2. The `pom.xml` defines dependencies for Rest Assured and Allure reporting.
+3. (Optional) Set `BASE_URI` via environment variable if overriding default:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+   ```bash
+   export API_BASE_URL=https://dummyjson.com
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Running Tests
 
-## Deploy on Vercel
+Run tests with Maven:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+mvn clean test
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Generate and open Allure report:
+
+```bash
+mvn allure:serve
+```
+
+This will compile results into `allure-report/` and open it in your default browser.
+
+## Test Plan and Strategy
+
+* **Scope**: Cover functional and negative scenarios for all listed endpoints.
+* **Architecture**:
+
+    * **Clients** encapsulate Rest Assured requests and common specifications (logging, filters).
+    * **Factories** generate valid and invalid DTOs for data-driven tests.
+* **Test Categories**:
+
+    * Health Check (`GET /test`)
+    * User flows (`GET /users`)
+    * Authentication (`POST /auth/login`)
+    * Product operations (`GET /auth/products`, `POST /products/add`, `GET /products`, `GET /products/{id}`)
+* **Validation**:
+
+    * Schema validation with JSON Schema files in `/schemas`
+    * Response body and status code assertions
+    * Negative tests for error status codes and messages
+
+## Bugs and Improvements
+
+* **Bugs Identified**:
+
+    * None in DummyJSON (mock service) but tests include negative scenarios to simulate failures.
+* **Suggested Improvements**:
+
+    * Add parameterized boundary tests for product price and rating.
+    * Enhance concurrency tests for bulk product creation.
+    * Integrate CI pipeline to run `mvn clean test` and publish Allure report on merge to `main`.
+
+## Managing Reports
+
+* **Allure Results** are stored in `allure-results/` (ignored by Git).
+* **Allure Report** can be generated via `mvn allure:report` and published as pipeline artifact.
+
+---
+
+*Last updated: May 26, 2025*
