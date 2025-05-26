@@ -2,7 +2,24 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Navbar } from './Navbar';
 
-jest.mock('next/link', () => ({ children, href }: any) => <a href={href}>{children}</a>);
+// Corrigindo o mock do next/link
+interface MockLinkProps {
+  children: React.ReactNode;
+  href: string;
+  [key: string]: any;
+}
+
+jest.mock('next/link', () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const MockedLink = ({ children, href, ...rest }: MockLinkProps) => (
+    <a href={href} {...rest}>
+      {children}
+    </a>
+  );
+  MockedLink.displayName = 'MockedLink';
+  return MockedLink;
+});
+
 
 describe('<Navbar />', () => {
     beforeEach(() => {

@@ -13,7 +13,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 
 
-import { useGetCatalogItemsQuery, CatalogItem } from '@/features/api/apiSlice';
+import { useGetCatalogItemsQuery} from '@/features/api/apiSlice';
 
 export default function CatalogPage() {
 

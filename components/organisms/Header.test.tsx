@@ -3,9 +3,23 @@ import { render, screen } from '@testing-library/react';
 import { Header } from './Header';
 import { useRouter } from 'next/router';
 
-jest.mock('next/link', () => ({ children, href }: any) => (
-    <a href={href}>{children}</a>
-));
+// Corrigindo o mock do next/link
+interface MockLinkProps {
+  children: React.ReactNode;
+  href: string;
+  [key: string]: any;
+}
+
+jest.mock('next/link', () => {
+  const MockedLink = ({ children, href, ...rest }: MockLinkProps) => (
+    <a href={href} {...rest}>
+      {children}
+    </a>
+  );
+  MockedLink.displayName = 'MockedLink';
+  return MockedLink;
+});
+
 jest.mock('next/router', () => ({
     useRouter: jest.fn(),
 }));
@@ -19,7 +33,7 @@ describe('<Header />', () => {
         render(<Header />);
         const logo = screen.getByAltText('MiStante') as HTMLImageElement;
         expect(logo).toBeInTheDocument();
-        expect(logo.src).toContain('/logo.png');
+        expect(logo.src).toContain('/logo.png'); 
         expect(logo.width).toBe(48);
         expect(logo.height).toBe(48);
     });
@@ -35,5 +49,4 @@ describe('<Header />', () => {
         const nav = screen.getByRole('navigation');
         expect(nav).toBeInTheDocument();
     });
-
 });
