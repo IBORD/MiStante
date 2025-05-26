@@ -32,7 +32,7 @@ export default function ContactPage() {
             Contact
           </Typography>
           <Typography variant="body1" paragraph align="center" sx={{ mb: 4 }}>
-            Tem alguma dúvida ou sugestão? Entre em contato conosco!
+            Do you have any questions or suggestions? Contact us!
           </Typography>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
