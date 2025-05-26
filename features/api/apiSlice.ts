@@ -1,34 +1,38 @@
-
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 export interface CatalogItem {
-    albumId: number;
     id: string;
     title: string;
-    url: string;
     thumbnailUrl: string;
 }
 
-
-export type CatalogItemsResponse = CatalogItem[];
+export interface DummyJSONProductsResponse {
+    products: Array<{
+        id: number;
+        title: string;
+        thumbnail: string;
+       
+    }>;
+    total: number;
+    skip: number;
+    limit: number;
+}
 
 export const catalogApi = createApi({
     reducerPath: 'catalogApi',
-    baseQuery: fetchBaseQuery({ baseUrl: 'https://jsonplaceholder.typicode.com/' }),
+    baseQuery: fetchBaseQuery({ baseUrl: 'https://dummyjson.com/' }),
     tagTypes: ['Catalog'],
     endpoints: (builder) => ({
-
         getCatalogItems: builder.query<CatalogItem[], void | { _limit?: number }>({
             query: (params) => ({
-                url: 'photos',
-                params: params || { _limit: 12 },
+                url: 'products',
+                params: params?._limit ? { limit: params._limit } : { limit: 12 },
             }),
-
-            transformResponse: (response: any[]) =>
-                response.map(item => ({
-                    ...item,
-                    id: String(item.id),
-                    src: item.thumbnailUrl,
+            transformResponse: (response: DummyJSONProductsResponse) =>
+                response.products.map(product => ({
+                    id: String(product.id),
+                    title: product.title,
+                    thumbnailUrl: product.thumbnail,
                 })) as CatalogItem[],
             providesTags: (result) =>
                 result
@@ -39,17 +43,17 @@ export const catalogApi = createApi({
                     : [{ type: 'Catalog', id: 'LIST' }],
         }),
 
+    
         getCatalogItemById: builder.query<CatalogItem, string>({
-            query: (id) => `photos/${id}`,
-            transformResponse: (response: any) => ({
-                ...response,
+            query: (id) => `products/${id}`, 
+            transformResponse: (response: any) => ({ 
                 id: String(response.id),
-                src: response.thumbnailUrl,
+                title: response.title,
+                thumbnailUrl: response.thumbnail,
             }) as CatalogItem,
             providesTags: (_result, _error, id) => [{ type: 'Catalog', id }],
         }),
     }),
-
 });
 
-export const { useGetCatalogItemsQuery, useGetCatalogItemByIdQuery /*, useUpdateItemMutation */ } = catalogApi;
+export const { useGetCatalogItemsQuery, useGetCatalogItemByIdQuery } = catalogApi;
